@@ -1,10 +1,17 @@
 import React from 'react'
-import Container from '../components/Container'
+
+import { Grid } from '@material-ui/core'
+
+import { Container, Logo } from '../components'
 
 function Menu() {
     return (
         <Container>
-            
+            <Grid container justify="center">
+                <Grid item xs={6}>
+                    <Logo />
+                </Grid>
+            </Grid>
         </Container>
     )
 }

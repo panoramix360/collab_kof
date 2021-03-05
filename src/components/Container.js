@@ -6,14 +6,16 @@ import { Container } from '@material-ui/core'
 import fundoMenu from '../assets/fundoMenu.png'
 
 const useStyles = makeStyles({
-    container: {
+    background: {
         height: '100vh',
-        margin: '0 auto',
         backgroundImage: `url(${fundoMenu})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         overflow: 'auto'
+    },
+    container: {
+        marginTop: '10rem'
     }
 })
 
@@ -21,8 +23,8 @@ function Background({ children }) {
     const classes = useStyles()
 
     return (
-        <div className={classes.container}>
-            <Container>
+        <div className={classes.background}>
+            <Container fluid className={classes.container}>
                 {children}
             </Container>
         </div>
