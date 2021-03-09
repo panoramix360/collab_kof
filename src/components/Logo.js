@@ -6,7 +6,7 @@ import logo from '../assets/logo.png'
 
 const useStyles = makeStyles({
     logo: {
-        width: '100%',
+        width: '50%',
     }
 })
 
@@ -14,7 +14,7 @@ function Logo() {
     const classes = useStyles()
 
     return (
-        <img className={classes.logo} src={logo} />
+        <img className={classes.logo} src={logo} alt="logo" />
     )
 }
 
