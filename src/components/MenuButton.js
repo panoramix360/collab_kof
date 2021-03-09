@@ -5,15 +5,17 @@ import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles({
     button: {
-        height: '3rem',
+        height: ({ small }) => small ? '2rem' : '3rem',
         '&:hover': {
             opacity: 0.5
         }
     }
 })
 
-function MenuButton({ source, onClick }) {
-    const classes = useStyles()
+function MenuButton({ small, source, onClick }) {
+    const classes = useStyles({
+        small
+    })
 
     return (
         <input className={classes.button} type="image" src={source} alt={source} onClick={onClick} />

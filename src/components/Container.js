@@ -3,12 +3,10 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Container } from '@material-ui/core'
 
-import fundoMenu from '../assets/fundoMenu.png'
-
 const useStyles = makeStyles({
     background: {
         height: '100vh',
-        backgroundImage: `url(${fundoMenu})`,
+        backgroundImage: ({ backgroundImage }) => `url(${backgroundImage})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
@@ -19,8 +17,10 @@ const useStyles = makeStyles({
     }
 })
 
-function Background({ children }) {
-    const classes = useStyles()
+function Background({ children, backgroundImage }) {
+    const classes = useStyles({
+        backgroundImage
+    })
 
     return (
         <div className={classes.background}>
