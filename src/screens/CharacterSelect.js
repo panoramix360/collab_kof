@@ -2,12 +2,14 @@ import React from "react";
 
 import { Grid } from "@material-ui/core";
 
-import { CharacterViewer, Container, Logo, MenuButton } from "../components";
+import { CharacterViewer, Container, Logo, MenuButton, CharacterGrid } from "../components";
 
 import fundo from "../assets/fundo.png";
 import back from "../assets/back.png";
 import mute from "../assets/mute.png";
 import characterTest from "../assets/arts/ALQUIMISTA_DO_ACRE_@thedanvelez.png";
+
+import json from '../assets/arts/arts.json'
 
 import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
@@ -20,15 +22,40 @@ function CharacterSelect() {
     const history = useHistory();
     const classes = useStyles();
 
+    const arts = buildCharacterObjects()
+
+    function buildCharacterObjects() {
+        let arts = []
+
+        json.arts.forEach((art) => {
+            const name = art.path.split('@')[0].replace('/arts/', '')
+            if (name !== 'arts.json') {
+                arts.push({
+                    name,
+                    artist: '@' + art.path.split('@')[1].replace('.png', ''),
+                    path: require(`../assets${art.path}`).default
+                })
+            }
+        })
+
+        return arts
+    }
+
     return (
         <Container backgroundImage={fundo}>
             <Grid container direction="column" spacing={6}>
                 <Grid container item xs={12}>
-                    <Grid item xs={6}>
+                    <Grid item xs={5}>
                         <CharacterViewer
                             name={"zoio de gato"}
                             artist={"@artista"}
                             art={characterTest}
+                        />
+                    </Grid>
+
+                    <Grid item xs={7}>
+                        <CharacterGrid
+                            characters={arts}
                         />
                     </Grid>
                 </Grid>
