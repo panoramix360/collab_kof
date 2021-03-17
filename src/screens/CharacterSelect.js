@@ -2,7 +2,7 @@ import React from "react";
 
 import { Grid } from "@material-ui/core";
 
-import { CharacterViewer, Container, Logo, MenuButton, CharacterGrid } from "../components";
+import { CharacterViewer, Container, MenuButton, CharacterGrid } from "../components";
 
 import fundo from "../assets/fundo.png";
 import back from "../assets/back.png";
@@ -12,15 +12,9 @@ import characterTest from "../assets/arts/ALQUIMISTA_DO_ACRE_@thedanvelez.png";
 import json from '../assets/arts/arts.json'
 
 import { useHistory } from "react-router-dom";
-import { makeStyles } from "@material-ui/styles";
-
-const useStyles = makeStyles({
-
-});
 
 function CharacterSelect() {
     const history = useHistory();
-    const classes = useStyles();
 
     const arts = buildCharacterObjects()
 

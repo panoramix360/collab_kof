@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
@@ -66,27 +66,7 @@ function CharacterGrid({ characters }) {
     const [filteredCharacters, setFilteredCharacters] = useState(characters);
     const [selection, setSelection] = useState(0);
 
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
-
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [handleKeyDown]);
-
-    useEffect(() => {
-        if (filteredCharacters.length > 0) {
-            const newFilteredCharacters = [...filteredCharacters]
-            const startIndex = 16
-            const rowsCount = 4
-            for(let i = 0, startIndex = 16; i < 4; i++, startIndex += 8) {
-                newFilteredCharacters.splice(startIndex, 0, {})
-                newFilteredCharacters.splice(startIndex + 1, 0, {})
-                newFilteredCharacters.splice(startIndex + 2, 0, {})
-            }
-            setFilteredCharacters(newFilteredCharacters)
-        }
-    }, []);
-
-    function handleKeyDown(event) {
+    const handleKeyDown = useCallback((event) => {
         switch (event.key) {
             case "ArrowLeft":
                 setSelection(Math.max(0, selection - 1));
@@ -100,8 +80,28 @@ function CharacterGrid({ characters }) {
             case "ArrowDown":
                 setSelection(Math.min(characters.length + 1, selection + 8));
                 break;
+            default:
+                break;
         }
-    }
+    }, [characters.length, selection])
+
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [handleKeyDown]);
+
+    useEffect(() => {
+        if (filteredCharacters.length > 0) {
+            const newFilteredCharacters = [...filteredCharacters]
+            for(let i = 0, startIndex = 16; i < 4; i++, startIndex += 8) {
+                newFilteredCharacters.splice(startIndex, 0, {})
+                newFilteredCharacters.splice(startIndex + 1, 0, {})
+                newFilteredCharacters.splice(startIndex + 2, 0, {})
+            }
+            setFilteredCharacters(newFilteredCharacters)
+        }
+    }, []);
 
     function _buildCharacterGrid(path, index) {
         if (path) {
@@ -112,7 +112,7 @@ function CharacterGrid({ characters }) {
                         alt="art"
                         className={classes.characterImage}
                     />
-                    {index == selection && (
+                    {index === selection && (
                         <div className={classes.characterSelection}></div>
                     )}
                 </>
