@@ -22,16 +22,15 @@ const useStyles = makeStyles({
     },
     artistName: {
         color: 'white',
-        flex: 1,
-        marginBottom: '-2rem'
+        flex: 1
     },
     drawName: {
         flex: 2,
         textAlign: 'center',
         color: 'white',
-        fontSize: '4rem',
+        fontSize: '2rem',
         padding: '2rem',
-        marginBottom: '-4.5rem',
+        marginBottom: '-3.5rem',
         backgroundImage: `url(${fundoNome})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

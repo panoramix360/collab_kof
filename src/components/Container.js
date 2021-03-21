@@ -24,7 +24,7 @@ function Background({ children, backgroundImage }) {
 
     return (
         <div className={classes.background}>
-            <Container fluid className={classes.container}>
+            <Container className={classes.container}>
                 {children}
             </Container>
         </div>

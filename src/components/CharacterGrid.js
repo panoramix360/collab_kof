@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
@@ -11,12 +11,14 @@ import threeSelected from "../assets/03V.png";
 import ok from "../assets/ok.png";
 import { MenuButton } from ".";
 
+import { StateContext } from "../contexts";
+
 const useStyles = makeStyles({
     background: {
         display: "flex",
         flexWrap: "wrap",
         height: "45rem",
-        position: 'relative',
+        position: "relative",
         backgroundImage: `url(${grade})`,
         backgroundPosition: "right",
         backgroundRepeat: "no-repeat",
@@ -44,64 +46,74 @@ const useStyles = makeStyles({
     },
     selectedCharacterBox: {
         position: "absolute",
-        top: '14rem',
-        left: '1rem'
+        top: "14rem",
+        left: "1rem",
     },
     selectedCharacterLine: {
-        display: 'flex',
-        alignItems: 'center',
-        '& span': {
-            fontSize: '1.5rem',
-            color: 'white',
-            marginLeft: '1rem'
+        display: "flex",
+        alignItems: "center",
+        "& span": {
+            fontSize: "1rem",
+            color: "white",
+            marginLeft: "1rem",
         },
-        '& img': {
-            height: '3rem'
-        }
-    }
+        "& img": {
+            height: "3rem",
+        },
+    },
 });
 
-function CharacterGrid({ characters }) {
+function CharacterGrid() {
     const classes = useStyles();
-    const [filteredCharacters, setFilteredCharacters] = useState(characters);
+    const context = useContext(StateContext);
     const [selection, setSelection] = useState(0);
 
-    const handleKeyDown = useCallback((event) => {
-        switch (event.key) {
-            case "ArrowLeft":
-                setSelection(Math.max(0, selection - 1));
-                break;
-            case "ArrowRight":
-                setSelection(Math.min(characters.length + 1, selection + 1));
-                break;
-            case "ArrowUp":
-                setSelection(Math.max(0, selection - 8));
-                break;
-            case "ArrowDown":
-                setSelection(Math.min(characters.length + 1, selection + 8));
-                break;
-            default:
-                break;
-        }
-    }, [characters.length, selection])
+    const handleKeyDown = useCallback(
+        (event) => {
+            function setSelectedArt(index) {
+                setSelection(index);
+                context.dispatch({ type: "SELECT_ART", payload: { index } });
+            }
+
+            switch (event.key) {
+                case "ArrowLeft": {
+                    const index = Math.max(0, selection - 1);
+                    setSelectedArt(index);
+                    break;
+                }
+                case "ArrowRight": {
+                    const index = Math.min(
+                        context.state.arts.length - 1,
+                        selection + 1
+                    );
+                    setSelectedArt(index);
+                    break;
+                }
+                case "ArrowUp": {
+                    const index = Math.max(0, selection - 8);
+                    setSelectedArt(index);
+                    break;
+                }
+                case "ArrowDown": {
+                    const index = Math.min(
+                        context.state.arts.length - 1,
+                        selection + 8
+                    );
+                    setSelectedArt(index);
+                    break;
+                }
+                default:
+                    break;
+            }
+        },
+        [context.state.arts.length, selection]
+    );
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
 
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [handleKeyDown]);
-
-    useEffect(() => {
-        if (filteredCharacters.length > 0) {
-            const newFilteredCharacters = [...filteredCharacters]
-            for(let i = 0, startIndex = 16; i < 4; i++, startIndex += 8) {
-                newFilteredCharacters.splice(startIndex, 0, {})
-                newFilteredCharacters.splice(startIndex + 1, 0, {})
-                newFilteredCharacters.splice(startIndex + 2, 0, {})
-            }
-            setFilteredCharacters(newFilteredCharacters)
-        }
-    }, []);
 
     function _buildCharacterGrid(path, index) {
         if (path) {
@@ -124,7 +136,7 @@ function CharacterGrid({ characters }) {
 
     return (
         <div className={classes.background}>
-            {filteredCharacters.map((character, index) => (
+            {context.state.arts.map((character, index) => (
                 <div key={index} className={classes.characterBox}>
                     {_buildCharacterGrid(character.path, index)}
                 </div>
@@ -132,19 +144,28 @@ function CharacterGrid({ characters }) {
 
             <div className={classes.selectedCharacterBox}>
                 <Grid container spacing={4}>
-                    <Grid item xs={12} className={classes.selectedCharacterLine}>
+                    <Grid
+                        item
+                        xs={12}
+                        className={classes.selectedCharacterLine}
+                    >
                         <img src={oneSelected} alt="primeiro personagem" />
-                        <span>Personagem</span>
+                        <span>{context.state.selectedArt.artist}</span>
                     </Grid>
 
-                    <Grid item xs={12} className={classes.selectedCharacterLine}>
-                        <img src={twoSelected} alt="segundo personagem" />
-                        <span>Personagem</span>
-                    </Grid>
-                    <Grid item xs={12} className={classes.selectedCharacterLine}>
-                        <img src={threeSelected} alt="terceiro personagem" />
-                        <span>Personagem</span>
-                    </Grid>
+                    {
+                        context.state.selectedArt.alternatives &&
+                        context.state.selectedArt.alternatives.map((character, index) => (
+                            <Grid
+                                item
+                                xs={12}
+                                className={classes.selectedCharacterLine}
+                            >
+                                <img src={index === 0 ? twoSelected : threeSelected} alt="segundo personagem" />
+                                <span>{character.artist}</span>
+                            </Grid>
+                        ))
+                    }
 
                     <Grid item xs={12}>
                         <MenuButton source={ok} />

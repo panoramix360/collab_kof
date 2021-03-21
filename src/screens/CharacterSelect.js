@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 
 import { Grid } from "@material-ui/core";
 
@@ -7,33 +7,19 @@ import { CharacterViewer, Container, MenuButton, CharacterGrid } from "../compon
 import fundo from "../assets/fundo.png";
 import back from "../assets/back.png";
 import mute from "../assets/mute.png";
-import characterTest from "../assets/arts/ALQUIMISTA_DO_ACRE_@thedanvelez.png";
-
-import json from '../assets/arts/arts.json'
 
 import { useHistory } from "react-router-dom";
+import { StateContext } from "../contexts";
 
 function CharacterSelect() {
+    const context = useContext(StateContext);
     const history = useHistory();
 
-    const arts = buildCharacterObjects()
+    useEffect(() => {
+        context.dispatch({ type: 'LOAD_ARTS' });
+    }, [])
 
-    function buildCharacterObjects() {
-        let arts = []
-
-        json.arts.forEach((art) => {
-            const name = art.path.split('@')[0].replace('/arts/', '')
-            if (name !== 'arts.json') {
-                arts.push({
-                    name,
-                    artist: '@' + art.path.split('@')[1].replace('.png', ''),
-                    path: require(`../assets${art.path}`).default
-                })
-            }
-        })
-
-        return arts
-    }
+    if (!context.state.selectedArt) return null;
 
     return (
         <Container backgroundImage={fundo}>
@@ -41,16 +27,14 @@ function CharacterSelect() {
                 <Grid container item xs={12}>
                     <Grid item xs={5}>
                         <CharacterViewer
-                            name={"zoio de gato"}
-                            artist={"@artista"}
-                            art={characterTest}
+                            name={context.state.selectedArt.name}
+                            artist={context.state.selectedArt.artist}
+                            art={context.state.selectedArt.path}
                         />
                     </Grid>
 
                     <Grid item xs={7}>
-                        <CharacterGrid
-                            characters={arts}
-                        />
+                        <CharacterGrid />
                     </Grid>
                 </Grid>
 
